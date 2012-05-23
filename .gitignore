@@ -1,0 +1,7 @@
+/TOTP
+/bin
+/lib
+/otp.db
+Patch.diff
+.build
+.*.swp
