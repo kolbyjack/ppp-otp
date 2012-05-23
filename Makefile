@@ -5,6 +5,8 @@ CFLAGS := -fPIC -O2 -fomit-frame-pointer -Wall -Werror -pipe -D__STDC_FORMAT_MAC
 #CFLAGS += -g -DDEBUG -O0
 LDFLAGS := -lcrypto
 CC := gcc
+PPP_VERSION := 2.4.5
+PLUGIN_FILE := /usr/lib/pppd/$(PPP_VERSION)/$(PROJECT).so
 
 BUILD := .build
 OBJ := $(SRC:%.c=$(BUILD)/%.o)
@@ -25,14 +27,14 @@ $(TARGET): $(OBJ)
 	@echo LD $(shell basename $@)
 	@$(CC) -shared -o $(TARGET) $(OBJ) $(LDFLAGS)
 
-run: /usr/lib/pppd/2.4.5/otp.so
+run: $(PLUGIN_FILE)
 	@sudo strace /usr/sbin/pptpd -f
 
-install: /usr/lib/pppd/2.4.5/otp.so
+install: $(PLUGIN_FILE)
 
-/usr/lib/pppd/2.4.5/otp.so: $(TARGET)
+$(PLUGIN_FILE): $(TARGET)
 	@echo CP $(shell basename $(TARGET))
-	@sudo cp $(TARGET) /usr/lib/pppd/2.4.5/
+	@sudo cp $(TARGET) $(PLUGIN_FILE)
 
 clean:
 	@echo RM $(shell basename $(TARGET)) $(BUILD)
