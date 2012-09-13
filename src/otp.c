@@ -307,6 +307,15 @@ otp_chap_verify(char *name, char *ourname, int id,
         break;
     }
 
+    /* Handle non-otp passwords before trying to parse out otp fields */
+    if (!strncasecmp(user_entry.secret, "plain:", sizeof("plain:") - 1)) {
+        const char *password = user_entry.secret + sizeof("plain:") - 1;
+
+        ok = digest->verify_response(id, name, (uint8_t *)password,
+            strlen(password), challenge, response, message, message_space);
+        goto done;
+    }
+
     if (split_secret(user_entry.secret, &otp_params)) {
         goto done;
     }
